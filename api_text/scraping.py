@@ -1,41 +1,53 @@
+from matplotlib.font_manager import json_dump, json_load
 import requests
 from bs4 import BeautifulSoup
 import networkx as nx
 from collections import Counter
 import matplotlib.pyplot as plt
+from pysondb import db
 import pydot
 from networkx.drawing.nx_pydot import graphviz_layout
+import json 
 
-# urlvar = input("écris l'url  :")
+a=db.getDb("api_text/WikiScraping.json")
 
-# url = 'https://fr.wikipedia.org/wiki/' + urlvar
+def wikiScraping():
 
-url = 'https://fr.wikipedia.org/wiki/'
+    urlvar = input("écris l'url  :").lower()
 
-response = requests.get(url)
+    url = 'https://fr.wikipedia.org/wiki/' + urlvar
 
-wikiP = []
+    response = requests.get(url)
 
-if response.ok:
+    wikiP = []
 
-    soup = BeautifulSoup(response.text , 'lxml')
-    
-    wikiWeb = soup.find("div", {"class":"mw-parser-output"}).findAll('p')
+    if response.ok: 
 
-    wikiP = [ i.text for i in wikiWeb ]
+        if a.getByQuery({'name' : urlvar}) == False or len(a.getByQuery({'name' : urlvar})) == 0:
+            soup = BeautifulSoup(response.text , 'lxml')
+            
+            wikiWeb = soup.find("div", {"class":"mw-parser-output"}).findAll('p')
 
-    scrapSplit = [ s.split() for s in  wikiP ]
+            #On récupère le text brut
+            wikiP = [ i.text for i in wikiWeb ]
 
-    scrapWord = [ item for sublist in scrapSplit for item in sublist] 
+            
+            scrapSplit = [ s.split() for s in  wikiP ]
 
-    scrapCount = Counter(scrapWord)
+            scrapWord = [ item for sublist in scrapSplit for item in sublist] 
 
-    print(scrapCount)
+            scrapCount = Counter(scrapWord)
+
+            a.add({"name":urlvar,"count":scrapCount,"tag" : "sans tag"})
+
+            print(a.getByQuery({"count" :{ "Pour" : 3}}))
+        else:
+            print("Le nom de la recherche existe déjà ou l'entrée est vide")
+    else:
+        print("l'url que t'as mis est pas juste ")
 
 
-else:
-    print("l'url que t'as mis est pas juste ")
+# wikiScraping()
 
-
-# -------------------------------------------
-
+# print(a.reSearch("Pour" , "3"))
+print(a.dumps())
