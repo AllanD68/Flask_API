@@ -13,7 +13,7 @@ import os.path
 
 
 def wikiScraping(urlvar):
-
+    urlvar=urlvar.replace(' ', '_')
     url = 'https://fr.wikipedia.org/wiki/' + urlvar
 
     response = requests.get(url)
@@ -56,6 +56,6 @@ def wikiScraping(urlvar):
         
 
 
-print(wikiScraping('portugal'))
+
 
 
