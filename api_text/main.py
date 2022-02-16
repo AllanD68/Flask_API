@@ -17,7 +17,7 @@ class Text(Resource):
     def delete(self,test):
         if os.path.isfile('JsonDB/' + test + '.json') == True:
             os.remove(f"JsonDB/{test}.json")
-            return 200
+            return
         else:
             abort (404,message="la ressource n'existe pas")
 
@@ -27,9 +27,10 @@ class All_text(Resource):
         if len(os.listdir('JsonDB')) < 0:
             dicRead = {}
             for i in os.listdir('JsonDB'):
-                # Deleting the file.
-                os.remove(f"JsonDB/" + i)
-            response=make_response(jsonify({"message" : ""}))
+                f=open('JsonDB/' + i,'r')
+                dicRead[i.split(-4)]= f 
+                f.close()
+            response=make_response(jsonify(dicRead))
     
     def delete(self):
         if len(os.listdir('JsonDB')) > 0:

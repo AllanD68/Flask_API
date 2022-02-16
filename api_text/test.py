@@ -1,14 +1,22 @@
+#%%
 import requests
 
+
 BASE = "http://127.0.0.1:5000/"
+#%%
+my_test=["naruto","dragon ball","one piece","bleach"]
 
-# my_test=["naruto","dragon ball","one piece"]
+for i in my_test:
+    response =requests.get(BASE +"text/"+i)
 
-# for i in my_test:
-#     response =requests.get(BASE +"text/"+i)
-#     print(response.json())
-
-
+#%%
+response=requests.delete(BASE+'text/'+input("which one ?").replace(' ', '_'))
+#%%
 response =requests.delete(BASE +"All_text")
 print(response.json())
 
+
+# %%
+response= requests.get(BASE+"text/"+input("which one ?").replace(' ', '_').lower())
+print(response.json())
+# %%
