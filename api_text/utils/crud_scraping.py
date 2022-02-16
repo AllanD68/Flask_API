@@ -1,3 +1,4 @@
+from genericpath import exists
 from matplotlib.font_manager import json_dump, json_load
 import requests
 from bs4 import BeautifulSoup
@@ -5,14 +6,13 @@ from collections import Counter
 import matplotlib.pyplot as plt
 import json 
 import itertools
+import os.path
 
 # a=db.getDb("api_text/WikiScraping.json")
 
 
 
-def wikiScraping():
-
-    urlvar = input("écris l'url  :").lower()
+def wikiScraping(urlvar):
 
     url = 'https://fr.wikipedia.org/wiki/' + urlvar
 
@@ -22,7 +22,6 @@ def wikiScraping():
 
     if response.ok: 
 
-        # if a.getByQuery({'name' : urlvar}) == False or len(a.getByQuery({'name' : urlvar})) == 0:
             soup = BeautifulSoup(response.text , 'lxml')
             
             wikiWeb = soup.find("div", {"class":"mw-parser-output"}).find_all('p')
@@ -37,23 +36,26 @@ def wikiScraping():
             
             scrapDic = dict(Counter(scrapWord))
 	      
-            print(scrapDic)
+            # print(scrapDic)
 
-            print(type(scrapDic))
+            # print(type(scrapDic))
 
-            with open('JsonDB/' + urlvar + '.json', 'w') as f:
-                json.dump(scrapDic, f)
+            if os.path.isfile('JsonDB/' + urlvar + '.json') == False:
+                with open('JsonDB/' + urlvar + '.json', 'w') as f:
+                    json.dump(scrapDic, f)
+                # print("Fichier Json créé")
+                return json.dumps(scrapDic)
+            else:
+                with open('JsonDB/' + urlvar + '.json', 'r') as f:
+                    j = json.load(f)
+                    # print("Cette recherche est déjà en mémoire")
+                    return j
 
-            # testDic = json.loads(urlvar + '.json'))
-
-           
-
-        # else:
-        #     print("Le nom de la recherche existe déjà ou l'entrée est vide")
     else:
-        print("l'url que t'as mis est pas juste ")
+        return False
+        
 
 
-wikiScraping()
+print(wikiScraping('portugal'))
 
 
