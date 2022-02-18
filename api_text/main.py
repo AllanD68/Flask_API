@@ -1,5 +1,5 @@
 from email import message
-from urllib import response
+# from urllib import response
 from flask import Flask, jsonify, make_response, request
 from flask_restful import Api, Resource, abort
 from numpy import delete
@@ -24,14 +24,15 @@ class Text(Resource):
 
 class All_text(Resource):
     def get(self):
-        if len(os.listdir('JsonDB')) < 0:
+        if len(os.listdir('JsonDB')) > 0:
             dicRead = {}
             for i in os.listdir('JsonDB'):
                 f=open('JsonDB/' + i,'r')
-                dicRead[i.split(-4)]= f 
+                dicRead[i.split(i[-5:])[0]]= f.read()
                 f.close()
-            response=make_response(jsonify(dicRead))
-    
+            response=jsonify(dicRead)
+            return response
+
     def delete(self):
         if len(os.listdir('JsonDB')) > 0:
             for i in os.listdir('JsonDB'):
@@ -42,6 +43,9 @@ class All_text(Resource):
             
         else:
             abort (404,message="le dossier est vide")
+
+    def put(self):
+        
 
 
 
